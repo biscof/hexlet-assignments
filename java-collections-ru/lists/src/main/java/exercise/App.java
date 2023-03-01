@@ -7,9 +7,6 @@ import java.util.List;
 
 // BEGIN
 public class App {
-    public static void main(String[] args) {
-        System.out.println(scrabble("", "googles"));
-    }
     public static boolean scrabble(String rawStr, String word) {
         if (word.length() > rawStr.length()) {
             return false;
