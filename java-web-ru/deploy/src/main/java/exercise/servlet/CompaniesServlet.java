@@ -29,7 +29,6 @@ public class CompaniesServlet extends HttpServlet {
                 companies.forEach(pw::println);
             } else {
                 filtered = companies.stream()
-                        .map(String::toLowerCase)
                         .filter(company -> company.contains(strToSearch))
                         .toList();
                 if (filtered.isEmpty()) {
