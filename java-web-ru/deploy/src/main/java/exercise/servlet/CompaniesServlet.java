@@ -30,7 +30,8 @@ public class CompaniesServlet extends HttpServlet {
                 companies.forEach(pw::println);
             } else {
                 filtered = companies.stream()
-                        .filter(company -> company.contains(strToSearch))
+                        .map(String::toLowerCase)
+                        .filter(company -> company.contains(strToSearch.toLowerCase()))
                         .toList();
                 if (filtered.isEmpty()) {
                     pw.println("Companies not found");
