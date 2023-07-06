@@ -5,10 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 // BEGIN
 @Entity
+@NoArgsConstructor
 @Getter
 @Setter
 // END
@@ -22,12 +24,5 @@ public class Person {
     private String firstName;
 
     private String lastName;
-
-    public Person() {}
-
-//    public Person(String firstName, String lastName) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//    }
     // END
 }
