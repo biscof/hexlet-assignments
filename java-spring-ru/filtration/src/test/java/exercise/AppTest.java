@@ -113,9 +113,30 @@ public class AppTest {
         assertThat(actualUser.getLastName()).isEqualTo("Wyvill");
     }
 
-    // Тест для дополнительной задачи
     // BEGIN
+    @Test
+    void testFilterByAllParams() throws Exception {
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/users?firstName=yb&lastName=no&email=lul&gender=male&profession=en"))
+                .andReturn()
+                .getResponse();
 
-    
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
+
+        List<User> actualUsers = objectMapper.readValue(
+                response.getContentAsString(),
+                new TypeReference<List<User>>() {}
+        );
+
+        User actualUser = actualUsers.get(0);
+        assertThat(actualUsers.size()).isEqualTo(1);
+        assertThat(actualUser.getFirstName()).isEqualTo("Sybila");
+        assertThat(actualUser.getLastName()).isEqualTo("Tomasino");
+        assertThat(actualUser.getEmail()).isEqualTo("stomasino2@lulu.com");
+        assertThat(actualUser.getGender()).isEqualTo("Male");
+        assertThat(actualUser.getProfession()).isEqualTo("Nuclear Power Engineer");
+
+    }
     // END
 }
