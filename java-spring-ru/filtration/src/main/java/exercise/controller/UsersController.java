@@ -1,4 +1,6 @@
 package exercise.controller;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import exercise.model.QUser;
 import exercise.model.User;
 import exercise.repository.UserRepository;
 import exercise.service.SearchCriteria;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 // Зависимости для самостоятельной работы
 // import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -23,35 +26,31 @@ public class UsersController {
 
     // BEGIN
     @GetMapping(path = "")
-    public List<User> getUsersByParams(
+    public Iterable<User> getUsersByParams(
             @RequestParam(name = "firstName", required = false) String firstName,
             @RequestParam(name = "gender", required = false) String gender,
             @RequestParam(name = "lastName", required = false) String lastName
-            ) {
+    ) {
 
-        List<Specification<User>> specifications = new ArrayList<>();
+        BooleanExpression predicate = null;
 
         if (firstName != null) {
-            specifications.add(new UserSpecification(new SearchCriteria<String>("firstName", firstName.toLowerCase())));
+            predicate = QUser.user.firstName.lower().contains(firstName.toLowerCase());
         }
 
         if (lastName != null) {
-            specifications.add(new UserSpecification(new SearchCriteria<String>("lastName", lastName.toLowerCase())));
+            predicate = predicate != null
+                    ? predicate.and(QUser.user.lastName.lower().contains(lastName.toLowerCase()))
+                    : QUser.user.lastName.lower().contains(lastName.toLowerCase());
         }
 
         if (gender != null) {
-            specifications.add(new UserSpecification(new SearchCriteria<String>("gender", gender.toLowerCase())));
+            predicate = predicate != null
+                    ? predicate.and(QUser.user.gender.lower().eq(gender.toLowerCase()))
+                    : QUser.user.gender.lower().eq(gender.toLowerCase());
         }
 
-        Specification<User> accumulatedSpecification = specifications.stream()
-                .reduce(null, (accumulatedSpec, specification) -> {
-                    if (accumulatedSpec == null) {
-                        return specification;
-                    }
-                    return accumulatedSpec.and(specification);
-                });
-
-        return userRepository.findAll(accumulatedSpecification);
+        return predicate == null ? new ArrayList<>() : userRepository.findAll(predicate);
     }
     // END
 }
