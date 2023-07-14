@@ -40,13 +40,7 @@ public class CityController {
                 : cityRepository.findCitiesByNameIgnoreCaseStartsWith(nameStartsWith);
 
         return cities.stream()
-                .map(c -> {
-                    try {
-                        return weatherService.getShortWeather(c.getName());
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .map(c -> weatherService.getShortWeather(c.getName()))
                 .toList();
     }
     // END

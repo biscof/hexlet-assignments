@@ -31,7 +31,7 @@ public class WeatherService {
     // BEGIN
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public Map<String, String> getWeather(Long cityId) throws JsonProcessingException {
+    public Map<String, String> getWeather(Long cityId) {
         String cityName = cityRepository
                 .findById(cityId)
                 .orElseThrow(() -> new CityNotFoundException("City with ID " + cityId + " doesn't exist"))
@@ -40,18 +40,21 @@ public class WeatherService {
         return this.getWeatherAsMap(cityName);
     }
 
-    public Map<String, String> getShortWeather(String cityName) throws JsonProcessingException {
+    public Map<String, String> getShortWeather(String cityName) {
         Map<String, String> weather = this.getWeatherAsMap(cityName);
-        Map<String, String> shortWeather = new HashMap<>();
-        shortWeather.put("temperature", weather.get("temperature"));
-        shortWeather.put("name", weather.get("name"));
-
-        return shortWeather;
+        return Map.of(
+                "temperature", weather.get("temperature"),
+                "name", weather.get("name")
+        );
     }
 
-    private Map<String, String> getWeatherAsMap(String cityName) throws JsonProcessingException {
+    private Map<String, String> getWeatherAsMap(String cityName) {
         String weatherStr = client.get(String.format("http://weather/api/v2/cities/%s", cityName));
-        return mapper.readValue(weatherStr, new TypeReference<HashMap<String, String>>() {});
+        try {
+            return mapper.readValue(weatherStr, new TypeReference<HashMap<String, String>>() {});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     // END
 }
