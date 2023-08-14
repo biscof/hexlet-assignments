@@ -2,8 +2,8 @@ package exercise;
 
 // BEGIN
 public class MinThread extends Thread {
-    int[] numbers;
-    int min;
+    private int[] numbers;
+    private int min;
 
     public MinThread(int[] numbers) {
         this.numbers = numbers;
